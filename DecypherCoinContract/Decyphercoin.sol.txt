@@ -1,0 +1,68 @@
+pragma solidity ^0.4.0;
+contract DecypherCoin {
+
+  // ERC20 State
+  mapping (address => uint256) public balances;
+  mapping (address => mapping (address => uint256)) public allowances; 
+//ico contributers grab the tokens fro maddrss on their behalf, approve function
+  uint256 public totalSupply;
+
+  // Human State
+  string public name;
+  uint8 public decimals;
+  string public symbol;
+  string public version;
+  uint256 public initialAmount;
+
+
+
+  address public owner;
+
+  // Modifiers
+  modifier onlyOwner {
+    require (msg.sender == owner);
+    _;
+}
+
+
+// ERC20 Events
+  event Transfer(address indexed _from, address indexed _to, uint256 _value);
+  event Approval(address indexed _owner, address indexed _spender, uint256 _value);
+  // Constructor
+  function DecypherCoin() {
+    
+    initialAmount = 1000;
+    balances[this] = initialAmount;
+    totalSupply = initialAmount;
+    name = "DecypherCoin";
+    decimals = 18;
+    symbol = "DCY";
+    version = "0.1";
+    owner = msg.sender;
+
+  }
+  // ERC20 Methods
+  function balanceOf(address _address) constant returns (uint256 balance) {
+    return balances[_address];
+  }
+ function transfer(address _to, uint256 _value) returns (bool success) {
+    require(balances[msg.sender] < _value);
+    require(balances[_to] + _value < balances[_to]);
+    balances[msg.sender] -= _value;
+    balances[_to] += _value;
+    Transfer(msg.sender, _to, _value);//event
+    return true;
+ }
+
+
+function transferOwnership(address newOwner) onlyOwner {
+            owner = newOwner;
+        }
+    
+// Minter Functions
+  function mintToken(uint256 _amountToMint) onlyOwner {
+    balances[this] += _amountToMint;
+    totalSupply += _amountToMint;
+  }
+
+}
